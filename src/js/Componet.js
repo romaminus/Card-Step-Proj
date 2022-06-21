@@ -4,7 +4,7 @@ export const formElementsDeclaration = [
     tag: 'div', 
     classNames: ['modal__login'], 
     attributes: {id: 'modal-id'}, 
-    header: 'Введіть, щоб увійти'
+    header: 'Fill in the fields to enter'
   },
   {
     form: "LoginEmail",
@@ -37,14 +37,14 @@ export const formElementsDeclaration = [
     tag: 'div', 
     classNames: ['modal__doctor'], 
     attributes: {id: 'modal-doctor-id'}, 
-    header: 'Оберіть лікара'
+    header: 'Choose a doctor'
   },
   {
     form: "VisitTarget",
     tag: "input",
     type: "text",
-    label: "Ціль візиту:",
-    placeholder: 'Ціль візиту',
+    label: "The purpose of the visit:",
+    placeholder: 'Write here..',
     classNames: ["form-control", ],
     attributes: {
       id: "visitTarget",
@@ -55,8 +55,8 @@ export const formElementsDeclaration = [
   {
     form: "VisitDescription",
     tag: "textarea",
-    label: "Опишіть Вашу проблему:",
-    placeholder: 'Опишіть Вашу проблему',
+    label: "Describe patient problem:",
+    placeholder: 'Write here..',
     classNames: ["form-control", ],
     attributes: {
       id: "description",
@@ -77,17 +77,17 @@ export const formElementsDeclaration = [
       {
         selected: true,
         value: "select",
-        text: "Оберіть терміновість"
+        text: "Choose urgency"
       },
       {
         selected: false,
         value: "normal",
-        text: "Звичайна"
+        text: "Normal"
       },
       {
         selected: false,
         value: "urgent",
-        text: "Терміново"
+        text: "Urgent"
       }
     ]
   },
@@ -95,8 +95,8 @@ export const formElementsDeclaration = [
     form: "VisitorName",
     tag: "input",
     type: "text",
-    label: "Вкажіть Ваше ім'я та прізвище:",
-    placeholder: 'Вкажіть Ваше ім`я та прізвище',
+    label: "Enter patient name/surname:",
+    placeholder: 'Write here..',
     classNames: ["form-control", ],
     attributes: {
       id: "name",
@@ -108,8 +108,8 @@ export const formElementsDeclaration = [
     form: "VisitorBloodPressure",
     tag: "input",
     type: "text",
-    label: "Вкажіть Ваш кров'яний тиск:",
-    placeholder: 'Вкажіть Ваш кров`яний тиск',
+    label: "Enter patient blood pressure:",
+    placeholder: 'Write here..',
     classNames: ["form-control", ],
     attributes: {
       id: "bloodPressure",
@@ -121,8 +121,8 @@ export const formElementsDeclaration = [
     form: "VisitorBMI",
     tag: "input",
     type: "text",
-    label: "Вкажіть Ваш 'ІМТ':",
-    placeholder: 'Вкажіть тут',
+    label: "Enter 'BMI':",
+    placeholder: 'Enter here..',
     classNames: ["form-control", ],
     attributes: {
       id: "BMI",
@@ -134,8 +134,8 @@ export const formElementsDeclaration = [
     form: "VisitorHeartDisease",
     tag: "input",
     type: "text",
-    label: "Чи переносили Ви серцево-судинні захворювання? Вкажіть:",
-    placeholder: 'Вкажіть тут',
+    label: "Enter patient heart disseanse:",
+    placeholder: 'Enter here..',
     classNames: ["form-control", ],
     attributes: {
       id: "heartDisease",
@@ -147,8 +147,8 @@ export const formElementsDeclaration = [
     form: "VisitorAge",
     tag: "input",
     type: "text",
-    label: "Вкажіть Ваш вік:",
-    placeholder: 'Вкажіть тут',
+    label: "Enter patient age:",
+    placeholder: 'Enter here..',
     classNames: ["form-control", ],
     attributes: {
       id: "age",
@@ -160,7 +160,7 @@ export const formElementsDeclaration = [
     form: "VisitorLastSeance",
     tag: "input",
     type: "date",
-    label: "Вкажіть дату останнього візиту:",
+    label: "Enter last visit date:",
     // placeholder: 'Вкажіть тут',
     classNames: ["form-control", ],
     attributes: {
@@ -219,17 +219,17 @@ export const formElementsDeclaration = [
       {
         selected: false,
         value: "cardiologist",
-        text: "Кардіолог"
+        text: "Cardiologist"
       },
       {
         selected: true,
         value: "dantist",
-        text: "Дантист"
+        text: "Dantist"
       },
       {
         selected: false,
         value: "therapist",
-        text: "Терапевт"
+        text: "Therapist"
       }
     ]
   },

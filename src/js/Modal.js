@@ -1,8 +1,7 @@
 import {Component, formElementsDeclaration} from "./Componet";
-import { Form } from "./Form";
-import { findElement, hideLoginBtn, makeRequest, visitorList } from "./main";
+import { findElement, hideLoginBtn, makeRequest, visitorList, renderedVisit } from "./main";
 import {Input, Select, Button} from './modalComponent'
-import { Visit, VisitCardiologist, VisitDantist, VisitTherapist } from "./Visit";
+import { VisitCardiologist, VisitDantist, VisitTherapist } from "./Visit";
 
 
 
@@ -21,7 +20,11 @@ class Modal extends Component{
         body.classList.add('modal__body');
         const footer = document.createElement('div');
         footer.classList.add('modal__footer');
-        footer.innerHTML = `<button type="button" class="btn btn-primary submit-btn">Створити</button>`
+        if (this.userData) {
+            footer.innerHTML = `<button type="button" class="btn btn-primary submit-btn">Edit</button>`
+        }else{
+            footer.innerHTML = `<button type="button" class="btn btn-primary submit-btn">Create</button>`
+        }
         this.elementById.append(title, body, footer);
         this.closeBtn()
     }
@@ -73,9 +76,14 @@ class DoctorModal extends Modal{
         const patientData = document.createElement('form');
         patientData.classList.add('patient-data', 'top-15');
         patientData.setAttribute('name', 'patient-data');
-        selectDoctor.render(findElement(formElementsDeclaration, 'SelectDoctor'), body);
+        const selectData = findElement(formElementsDeclaration, 'SelectDoctor')
+        selectDoctor.render(selectData, body);
+        if (this.userData) {
+            selectDoctor.elementById.value = this.userData.doctor
+        }
         body.append(patientData);
         this.chooseDoctor();
+        this.renderDoctor(selectData.options.find(o => o.selected).value);
         this.submit();
     }
     renderDoctorInput(){
@@ -89,6 +97,13 @@ class DoctorModal extends Modal{
         visitDescr.render(findElement(formElementsDeclaration, 'VisitDescription'), rootPatientData);
         visitUrgent.render(findElement(formElementsDeclaration, 'VisitUrgency'), rootPatientData);
         visitorName.render(findElement(formElementsDeclaration, 'VisitorName'), rootPatientData);
+        if (this.userData) {
+            visitTarget.elementById.value = this.userData.visitTarget;
+            visitDescr.elementById.value = this.userData.description;
+            visitUrgent.elementById.value = this.userData.selectedUrgency;
+            visitorName.elementById.value = this.userData.name;
+        }
+        
     }
     renderCardiologist(){
         const rootPatientData = document.querySelector('.patient-data');
@@ -101,36 +116,53 @@ class DoctorModal extends Modal{
         bmi.render(findElement(formElementsDeclaration, 'VisitorBMI'), rootPatientData);
         heartDisease.render(findElement(formElementsDeclaration, 'VisitorHeartDisease'), rootPatientData);
         age.render(findElement(formElementsDeclaration, 'VisitorAge'), rootPatientData);
+        if (this.userData) {
+            bloodPressure.elementById.value = this.userData.bloodPressure;
+            bmi.elementById.value = this.userData.BMI;
+            heartDisease.elementById.value = this.userData.heartDisease;
+            age.elementById.value = this.userData.age;
+        }
 
     }
     renderDantist(){
         const rootPatientData = document.querySelector('.patient-data');
         this.renderDoctorInput();
         const lastSeance = new Input();
-        lastSeance.render(findElement(formElementsDeclaration, 'VisitorLastSeance'), rootPatientData)
+        lastSeance.render(findElement(formElementsDeclaration, 'VisitorLastSeance'), rootPatientData);
+        if (this.userData) {
+            lastSeance.elementById.value = this.userData.lastSeance;
+        }
     }
     renderTherapist(){
         const rootPatientData = document.querySelector('.patient-data');
         this.renderDoctorInput();
         const age = new Input();
-        age.render(findElement(formElementsDeclaration, 'VisitorAge'), rootPatientData)
+        age.render(findElement(formElementsDeclaration, 'VisitorAge'), rootPatientData);
+        if (this.userData) {
+            age.elementById.value = this.userData.age;
+        }
     }
+
+    renderDoctor(doctor) {
+        switch (doctor) {
+            case 'cardiologist':
+                this.renderCardiologist()
+                break;
+            case 'dantist':
+                this.renderDantist()
+                break;
+            case 'therapist':
+                this.renderTherapist()
+                break;
+            default:
+                break;
+        }
+    }
+
     chooseDoctor(){
         const select = document.querySelector('.select__doctor');
         select.addEventListener('change', (e)=>{
-            switch (select.value) {
-                case 'cardiologist':
-                    this.renderCardiologist()
-                    break;
-                case 'dantist':
-                    this.renderDantist()
-                    break;
-                case 'therapist':
-                    this.renderTherapist()
-                    break;
-                default:
-                    break;
-            }
+            this.renderDoctor(select.value);
         })
     }
     getPatientData(){
@@ -138,6 +170,9 @@ class DoctorModal extends Modal{
         const doctor = document.querySelector('.select__doctor');
         const patientDataArr = [...patientDataForm.elements];
         const patientDataObj = {doctor: doctor.value};
+        if (this.userData) {
+            patientDataObj.id = this.userData.id;
+        }
         patientDataArr.forEach(el=>{
             patientDataObj[el.name] = el.value;
         })
@@ -146,22 +181,38 @@ class DoctorModal extends Modal{
     submit(){
         const submitBtn = document.querySelector('.submit-btn');
         submitBtn.addEventListener('click', async (e)=>{
-            
-            let request = makeRequest('https://ajax.test-danit.com/api/v2/cards', this.getPatientData(), 'POST');
-            let cardData = await request;
-            console.log(cardData);
+            let request;
+            let cardData;
+            if (!this.userData) {
+                request = makeRequest('https://ajax.test-danit.com/api/v2/cards', this.getPatientData(), 'POST');
+                cardData = await request;
+            }else{
+                request = makeRequest(`https://ajax.test-danit.com/api/v2/cards/${this.userData.id}`, this.getPatientData(), 'PUT');
+                cardData = await request;
+                const delEl = document.getElementById(`${this.userData.id}`);
+                delEl.remove();
+            }
+
             if (cardData.hasOwnProperty('id')) {
-                visitorList.push(cardData)
                 let root = document.querySelector('.card__root>.container');
                 switch (cardData.doctor) {
                     case 'cardiologist':
-                        new VisitCardiologist(cardData).render(addUserIdToElementData(cardData, findElement(formElementsDeclaration, 'VisitCard')), root);
+                        let visitCardio = new VisitCardiologist(cardData);
+                        visitCardio.render(addUserIdToElementData(cardData, findElement(formElementsDeclaration, 'VisitCard')), root);
+                        renderedVisit.push(visitCardio);
+                        // visitorList()
                         break;
                     case 'dantist':
-                        new VisitDantist(cardData).render(addUserIdToElementData(cardData, findElement(formElementsDeclaration, 'VisitCard')), root);
+                        let visitDant = new VisitDantist(cardData);
+                        visitDant.render(addUserIdToElementData(cardData, findElement(formElementsDeclaration, 'VisitCard')), root);
+                        renderedVisit.push(visitDant);
+                        // visitorList()
                         break;
                     case 'therapist':
-                        new VisitTherapist(cardData).render(addUserIdToElementData(cardData, findElement(formElementsDeclaration, 'VisitCard')), root);
+                        let visitTherap = new VisitTherapist(cardData)
+                        visitTherap.render(addUserIdToElementData(cardData, findElement(formElementsDeclaration, 'VisitCard')), root);
+                        renderedVisit.push(visitTherap);
+                        // visitorList()
                         break;
                     default:
                         break;
@@ -172,7 +223,7 @@ class DoctorModal extends Modal{
         })
     }
 }
-function addUserIdToElementData(userData, elementData) {
+export function addUserIdToElementData(userData, elementData) {
     return {...elementData, attributes: {id: userData.id}}
 }
 

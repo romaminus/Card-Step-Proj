@@ -13,7 +13,6 @@ export class Input extends Component {
       this.elementById.before(label)
     }
 }
-// new Input().render({tag: 'input', type: 'text', label: 'Label', placeholder: 'placeholder', attributes: {id: 'id', name: 'name'}, classNames: ["form-control"]})
 
 export class Select extends Component{
   constructor(userData){
